@@ -1,30 +1,38 @@
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
 
-void* private_mempcy(void * dst, const void * src, size_t n) {
-  return memcpy(dst, src, n);
-}
-
 void test_memcpy() {
   int a[10];
+  int * b = a;
   memset(a, 0, sizeof(a));
-  private_mempcy(a, a, sizeof(a));
+  int * res = (int* ) memcpy(b, a, sizeof(a));
+
+  printf("memcpy success ? %d\n", res > a);
 }
 
 void test_outside_object() {
-  int tab[1];
-  size_t len = sizeof(tab);
-  memset(tab, 0, len);
+  int * tab = (int*) malloc(sizeof(int));
+  if (!tab)
+    return;
+  size_t len = 1;
+  memset(tab, 0, len*sizeof(int));
 
   int * left, *right;
   left = &tab[0];
   right = &tab[len-1];
+  int loop_count = 0;
 
   while(left <= right) {
+    loop_count++;
     left++;
     right--;
   }
+
+  printf("Loop count %d\n", loop_count);
+
+  free(tab);
 }
 
 int abs(int val) {
@@ -33,7 +41,7 @@ int abs(int val) {
 
 void test_signed_overflow() {
   int a = abs(INT_MIN);
-  (void)a;
+  printf("%d\n", a);
 }
 
 int main() {
